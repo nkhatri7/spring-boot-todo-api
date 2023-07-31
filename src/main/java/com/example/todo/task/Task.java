@@ -1,5 +1,6 @@
 package com.example.todo.task;
 
+import com.example.todo.user.User;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -21,10 +22,13 @@ public class Task {
     @Column(nullable = false)
     private String title;
     private String description;
-    @Column(nullable = false)
+    @Column(name = "due_date", nullable = false)
     private LocalDate dueDate;
     @Column(nullable = false)
     private boolean completed;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     public Task() {}
 
