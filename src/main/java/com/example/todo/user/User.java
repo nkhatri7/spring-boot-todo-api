@@ -6,7 +6,8 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity(name = "User")
-@Table(name = "user")
+// Have to use "users" because "user" is a reserved word in PostgreSQL
+@Table(name = "users")
 public class User {
     @Id
     @SequenceGenerator(
@@ -25,7 +26,7 @@ public class User {
     private String email;
     @Column(nullable = false)
     private String password;
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @Column(nullable = false)
     private List<Task> tasks;
 

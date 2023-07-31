@@ -25,7 +25,7 @@ public class Task {
     @Column(name = "due_date", nullable = false)
     private LocalDate dueDate;
     @Column(nullable = false)
-    private boolean completed;
+    private boolean isComplete;
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -33,11 +33,11 @@ public class Task {
     public Task() {}
 
     public Task(String title, String description, LocalDate dueDate,
-                boolean completed) {
+                boolean isComplete) {
         this.title = title;
         this.description = description;
         this.dueDate = dueDate;
-        this.completed = completed;
+        this.isComplete = isComplete;
     }
 
     public Long getId() {
@@ -73,10 +73,18 @@ public class Task {
     }
 
     public boolean isCompleted() {
-        return completed;
+        return isComplete;
     }
 
     public void setCompleted(boolean completed) {
-        this.completed = completed;
+        this.isComplete = completed;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
