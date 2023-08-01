@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class TaskService {
@@ -37,5 +38,9 @@ public class TaskService {
 
     public Task getTaskById(Long taskId) {
         return taskRepository.getTaskById(taskId);
+    }
+
+    public List<Task> getUserTasks(Long userId) {
+        return taskRepository.getTasksByUserId(userId);
     }
 }

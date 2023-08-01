@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/task")
 public class TaskController {
@@ -52,5 +54,14 @@ public class TaskController {
             throw new AuthorisationException("Unauthorised - not your task");
         }
         return ResponseEntity.ok(task.toDTO());
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<TaskDTO>> getUserTasks(
+            @PathVariable Long userId) {
+        List<TaskDTO> tasks = taskService.getUserTasks(userId).stream()
+                .map(Task::toDTO)
+                .toList();
+        return ResponseEntity.ok(tasks);
     }
 }
