@@ -72,11 +72,11 @@ public class Task {
         this.dueDate = dueDate;
     }
 
-    public boolean isCompleted() {
+    public boolean isComplete() {
         return isComplete;
     }
 
-    public void setCompleted(boolean completed) {
+    public void setComplete(boolean completed) {
         this.isComplete = completed;
     }
 
@@ -86,5 +86,10 @@ public class Task {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public TaskDTO toDTO() {
+        return new TaskDTO(this.id, this.user.getId(), this.title,
+                this.description, this.dueDate, this.isComplete);
     }
 }

@@ -79,7 +79,7 @@ public class User {
         this.tasks = tasks;
     }
 
-    public UserDto toDto() {
-        return new UserDto(this.id, this.name, this.email);
+    public UserDTO toDTO() {
+        return new UserDTO(this.id, this.name, this.email);
     }
 }

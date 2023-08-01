@@ -19,10 +19,6 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public UserDto getUserById(Long userId) {
-        return userRepository.getUserById(userId);
-    }
-
     public User getUserByEmail(User user) {
         return userRepository.getUserByEmail(user.getEmail());
     }

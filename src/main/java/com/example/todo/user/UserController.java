@@ -18,7 +18,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserDto> registerUser(@RequestBody User user) {
+    public ResponseEntity<UserDTO> registerUser(@RequestBody User user) {
         if (user.getName() == null || user.getName().trim().isEmpty()) {
             throw new ValidationException("Missing name");
         }
@@ -32,11 +32,11 @@ public class UserController {
             throw new ValidationException("Account with this email already exists");
         }
         User newUser = userService.createUser(user);
-        return new ResponseEntity<>(newUser.toDto(), HttpStatus.CREATED);
+        return new ResponseEntity<>(newUser.toDTO(), HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserDto> signInUser(@RequestBody User user) {
+    public ResponseEntity<UserDTO> signInUser(@RequestBody User user) {
         if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
             throw new ValidationException("Missing email");
         }
@@ -50,6 +50,6 @@ public class UserController {
         if (!userService.isPasswordValid(user.getPassword(), signedInUser)) {
             throw new AuthorisationException("Incorrect password");
         }
-        return new ResponseEntity<>(signedInUser.toDto(), HttpStatus.OK);
+        return ResponseEntity.ok(signedInUser.toDTO());
     }
 }
