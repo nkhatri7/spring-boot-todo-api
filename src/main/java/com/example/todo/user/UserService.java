@@ -23,8 +23,4 @@ public class UserService {
     public User getUserByEmail(User user) {
         return userRepository.getUserByEmail(user.getEmail());
     }
-
-    public UserDto convertUserToUserDto(User user) {
-        return new UserDto(user.getId(), user.getName(), user.getEmail());
-    }
 }

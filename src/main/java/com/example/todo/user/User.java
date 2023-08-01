@@ -78,4 +78,8 @@ public class User {
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
     }
+
+    public UserDto toDto() {
+        return new UserDto(this.id, this.name, this.email);
+    }
 }

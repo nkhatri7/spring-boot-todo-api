@@ -1,7 +1,10 @@
 package com.example.todo.user;
 
+import com.example.todo.exceptions.AuthorisationException;
 import com.example.todo.exceptions.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,7 +18,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public UserDto registerNewUser(@RequestBody User user) {
+    public ResponseEntity<UserDto> registerUser(@RequestBody User user) {
         if (user.getName() == null || user.getName().trim().isEmpty()) {
             throw new ValidationException("Missing name");
         }
@@ -29,6 +32,24 @@ public class UserController {
             throw new ValidationException("Account with this email already exists");
         }
         User newUser = userService.createUser(user);
-        return userService.convertUserToUserDto(newUser);
+        return new ResponseEntity<>(newUser.toDto(), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<UserDto> signInUser(@RequestBody User user) {
+        if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
+            throw new ValidationException("Missing email");
+        }
+        if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
+            throw new ValidationException("Missing password");
+        }
+        User signedInUser = userService.getUserByEmail(user);
+        if (signedInUser == null) {
+            throw new ValidationException("Account with email doesn't exist");
+        }
+        if (!user.getPassword().equals(signedInUser.getPassword())) {
+            throw new AuthorisationException("Incorrect password");
+        }
+        return new ResponseEntity<>(signedInUser.toDto(), HttpStatus.OK);
     }
 }
