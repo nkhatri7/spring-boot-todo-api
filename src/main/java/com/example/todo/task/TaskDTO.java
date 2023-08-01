@@ -13,7 +13,7 @@ public class TaskDTO {
     public TaskDTO() {}
 
     public TaskDTO(Long id, Long userId, String title, String description,
-                   LocalDate dueDate, boolean isComplete) {
+            LocalDate dueDate, boolean isComplete) {
         this.id = id;
         this.userId = userId;
         this.title = title;

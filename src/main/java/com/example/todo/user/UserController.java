@@ -29,7 +29,9 @@ public class UserController {
             throw new ValidationException("Missing password");
         }
         if (userService.getUserByEmail(user) != null) {
-            throw new ValidationException("Account with this email already exists");
+            throw new ValidationException(
+                    "Account with this email already exists"
+            );
         }
         User newUser = userService.createUser(user);
         return new ResponseEntity<>(newUser.toDTO(), HttpStatus.CREATED);
@@ -45,7 +47,9 @@ public class UserController {
         }
         User signedInUser = userService.getUserByEmail(user);
         if (signedInUser == null) {
-            throw new ValidationException("Account with email doesn't exist");
+            throw new ValidationException(
+                    "Account with this email doesn't exist"
+            );
         }
         if (!userService.isPasswordValid(user.getPassword(), signedInUser)) {
             throw new AuthorisationException("Incorrect password");

@@ -33,7 +33,7 @@ public class Task {
     public Task() {}
 
     public Task(String title, String description, LocalDate dueDate,
-                boolean isComplete) {
+            boolean isComplete) {
         this.title = title;
         this.description = description;
         this.dueDate = dueDate;
