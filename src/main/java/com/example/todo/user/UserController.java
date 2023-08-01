@@ -47,7 +47,7 @@ public class UserController {
         if (signedInUser == null) {
             throw new ValidationException("Account with email doesn't exist");
         }
-        if (!user.getPassword().equals(signedInUser.getPassword())) {
+        if (!userService.isPasswordValid(user.getPassword(), signedInUser)) {
             throw new AuthorisationException("Incorrect password");
         }
         return new ResponseEntity<>(signedInUser.toDto(), HttpStatus.OK);
