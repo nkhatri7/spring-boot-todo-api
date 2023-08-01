@@ -1,6 +1,6 @@
 package com.example.todo.task;
 
-import com.example.todo.exceptions.NotFoundException;
+import com.example.todo.exceptions.ValidationException;
 import com.example.todo.user.User;
 import com.example.todo.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,8 @@ public class TaskService {
     public Task createTask(NewTaskRequestBody requestBody) {
         User user = userRepository.getUserById(requestBody.getUserId());
         if (user == null) {
-            throw new NotFoundException("User with ID not found");
+            throw new ValidationException("User with ID "
+                    + requestBody.getUserId() + " doesn't exist");
         }
         Task task = new Task();
         task.setTitle(requestBody.getTitle());
@@ -32,5 +33,9 @@ public class TaskService {
         task.setComplete(false);
         task.setUser(user);
         return taskRepository.save(task);
+    }
+
+    public Task getTaskById(Long taskId) {
+        return taskRepository.getTaskById(taskId);
     }
 }

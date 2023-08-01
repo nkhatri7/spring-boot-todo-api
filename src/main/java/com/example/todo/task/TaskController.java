@@ -1,13 +1,13 @@
 package com.example.todo.task;
 
+import com.example.todo.exceptions.AuthenticationException;
+import com.example.todo.exceptions.AuthorisationException;
+import com.example.todo.exceptions.NotFoundException;
 import com.example.todo.exceptions.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/task")
@@ -36,5 +36,21 @@ public class TaskController {
         }
         Task newTask = taskService.createTask(body);
         return new ResponseEntity<>(newTask.toDTO(), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<TaskDTO> getTask(@PathVariable Long id,
+                                           @RequestParam Long userId) {
+        Task task = taskService.getTaskById(id);
+        if (task == null) {
+            throw new NotFoundException("Cannot find task with ID " + id);
+        }
+        if (userId == null) {
+            throw new AuthenticationException("Unauthenticated");
+        }
+        if (!userId.equals(task.getUser().getId())) {
+            throw new AuthorisationException("Unauthorised - not your task");
+        }
+        return ResponseEntity.ok(task.toDTO());
     }
 }
