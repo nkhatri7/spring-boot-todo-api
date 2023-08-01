@@ -2,8 +2,8 @@ package com.example.todo.task;
 
 import com.example.todo.exceptions.AuthenticationException;
 import com.example.todo.exceptions.AuthorisationException;
-import com.example.todo.exceptions.NotFoundException;
 import com.example.todo.exceptions.ValidationException;
+import com.example.todo.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,19 +22,15 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<TaskDTO> createTask(
-            @RequestBody NewTaskRequestBody body) {
+    public ResponseEntity<TaskDTO> createTask(@RequestBody TaskDTO body) {
         if (body.getTitle() == null || body.getTitle().trim().isEmpty()) {
             throw new ValidationException("Missing task title");
         }
-        if (body.getDueDate() == null || body.getDueDate().trim().isEmpty()) {
+        if (body.getDueDate() == null) {
             throw new ValidationException("Missing due date");
         }
         if (body.getUserId() == null) {
             throw new ValidationException("Missing user ID");
-        }
-        if (body.getDescription() == null) {
-            body.setDescription("");
         }
         Task newTask = taskService.createTask(body);
         return new ResponseEntity<>(newTask.toDTO(), HttpStatus.CREATED);
@@ -42,11 +38,8 @@ public class TaskController {
 
     @GetMapping("/{id}")
     public ResponseEntity<TaskDTO> getTask(@PathVariable Long id,
-                                           @RequestParam Long userId) {
+               @RequestParam Long userId) {
         Task task = taskService.getTaskById(id);
-        if (task == null) {
-            throw new NotFoundException("Cannot find task with ID " + id);
-        }
         if (userId == null) {
             throw new AuthenticationException("Unauthenticated");
         }
@@ -63,5 +56,20 @@ public class TaskController {
                 .map(Task::toDTO)
                 .toList();
         return ResponseEntity.ok(tasks);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<TaskDTO> updateTask(@PathVariable Long id,
+              @RequestBody TaskDTO body) {
+        Task task = taskService.getTaskById(id);
+        if (body.getUserId() == null) {
+            throw new ValidationException("Missing user ID");
+        }
+        User user = task.getUser();
+        if (!body.getUserId().equals(user.getId())) {
+            throw new AuthorisationException("Unauthorised - not your task");
+        }
+        Task updatedTask = taskService.updateTask(task, body);
+        return ResponseEntity.ok(updatedTask.toDTO());
     }
 }
