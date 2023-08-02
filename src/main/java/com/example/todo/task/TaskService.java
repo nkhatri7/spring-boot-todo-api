@@ -44,7 +44,7 @@ public class TaskService {
     }
 
     public List<Task> getUserTasks(Long userId) {
-        return taskRepository.getTasksByUserId(userId);
+        return taskRepository.findAllByUserId(userId);
     }
 
     @Transactional

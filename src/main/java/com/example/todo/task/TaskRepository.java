@@ -8,9 +8,6 @@ import java.util.List;
 
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
-    @Query("SELECT t FROM Task t WHERE t.id = ?1")
-    Task getTaskById(Long taskId);
-
     @Query("SELECT t FROM Task t WHERE t.user.id = ?1")
-    List<Task> getTasksByUserId(Long userId);
+    List<Task> findAllByUserId(Long userId);
 }

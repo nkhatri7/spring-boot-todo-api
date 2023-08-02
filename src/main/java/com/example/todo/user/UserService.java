@@ -23,7 +23,7 @@ public class UserService {
     }
 
     public Optional<User> getUserByEmail(String email) {
-        return userRepository.getUserByEmail(email);
+        return userRepository.findByEmail(email);
     }
 
     public String encryptPassword(String password) {
