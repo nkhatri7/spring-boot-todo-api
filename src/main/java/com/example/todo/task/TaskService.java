@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TaskService {
@@ -22,11 +23,11 @@ public class TaskService {
         this.userRepository = userRepository;
     }
 
-    public Task createTask(NewTaskPayload payload) {
-        User user = userRepository.findById(payload.userId())
-                .orElseThrow(() -> new ValidationException(
-                        "User with ID " + payload.userId() + " doesn't exist"
-                ));
+    public Optional<User> getTaskUser(Long userId) {
+        return userRepository.findById(userId);
+    }
+
+    public Task createTask(NewTaskPayload payload, User user) {
         Task task = new Task();
         task.setTitle(payload.title().trim());
         if (payload.description() == null) {
@@ -40,10 +41,8 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
-    public Task getTaskById(Long taskId) {
-        return taskRepository.findById(taskId).orElseThrow(() ->
-                new NotFoundException("Cannot find task with ID " + taskId)
-        );
+    public Optional<Task> getTaskById(Long taskId) {
+        return taskRepository.findById(taskId);
     }
 
     public List<Task> getUserTasks(Long userId) {

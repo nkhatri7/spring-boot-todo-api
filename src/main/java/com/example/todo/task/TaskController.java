@@ -1,6 +1,8 @@
 package com.example.todo.task;
 
 import com.example.todo.exceptions.AuthorisationException;
+import com.example.todo.exceptions.NotFoundException;
+import com.example.todo.exceptions.ValidationException;
 import com.example.todo.user.User;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +26,18 @@ public class TaskController {
     @PostMapping
     public ResponseEntity<TaskDTO> createTask(
             @RequestBody @Valid NewTaskPayload payload) {
-        Task newTask = taskService.createTask(payload);
+        User user = taskService.getTaskUser(payload.userId())
+                .orElseThrow(() -> new ValidationException("Invalid user"));
+        Task newTask = taskService.createTask(payload, user);
         return new ResponseEntity<>(newTask.toDTO(), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<TaskDTO> getTask(@PathVariable Long id,
                @RequestParam @NonNull Long userId) {
-        Task task = taskService.getTaskById(id);
+        Task task = taskService.getTaskById(id).orElseThrow(() -> {
+            return new NotFoundException("Cannot find task with ID" + id);
+        });
         if (!userId.equals(task.getUser().getId())) {
             throw new AuthorisationException("Unauthorised - not your task");
         }
@@ -50,7 +56,9 @@ public class TaskController {
     @PutMapping("/{id}")
     public ResponseEntity<TaskDTO> updateTask(@PathVariable Long id,
               @RequestBody @Valid UpdateTaskPayload payload) {
-        Task task = taskService.getTaskById(id);
+        Task task = taskService.getTaskById(id).orElseThrow(() -> {
+            return new NotFoundException("Cannot find task with ID" + id);
+        });
         User user = task.getUser();
         if (!payload.userId().equals(user.getId())) {
             throw new AuthorisationException("Unauthorised - not your task");
@@ -62,7 +70,9 @@ public class TaskController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteTask(@PathVariable Long id,
             @RequestParam @NonNull Long userId) {
-        Task task = taskService.getTaskById(id);
+        Task task = taskService.getTaskById(id).orElseThrow(() -> {
+            return new NotFoundException("Cannot find task with ID" + id);
+        });
         User user = task.getUser();
         if (!userId.equals(user.getId())) {
             throw new AuthorisationException("Unauthorised - not your task");
