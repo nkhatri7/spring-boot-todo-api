@@ -1,7 +1,5 @@
 package com.example.todo.task;
 
-import com.example.todo.exceptions.NotFoundException;
-import com.example.todo.exceptions.ValidationException;
 import com.example.todo.user.User;
 import com.example.todo.user.UserRepository;
 import jakarta.transaction.Transactional;
