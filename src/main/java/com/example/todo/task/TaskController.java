@@ -36,7 +36,7 @@ public class TaskController {
     public ResponseEntity<TaskDTO> getTask(@PathVariable Long id,
                @RequestParam @NonNull Long userId) {
         Task task = taskService.getTaskById(id).orElseThrow(() -> {
-            return new NotFoundException("Cannot find task with ID" + id);
+            return new NotFoundException("Cannot find task with ID " + id);
         });
         if (!userId.equals(task.getUser().getId())) {
             throw new AuthorisationException("Unauthorised - not your task");
@@ -57,7 +57,7 @@ public class TaskController {
     public ResponseEntity<TaskDTO> updateTask(@PathVariable Long id,
               @RequestBody @Valid UpdateTaskPayload payload) {
         Task task = taskService.getTaskById(id).orElseThrow(() -> {
-            return new NotFoundException("Cannot find task with ID" + id);
+            return new NotFoundException("Cannot find task with ID " + id);
         });
         User user = task.getUser();
         if (!payload.userId().equals(user.getId())) {
@@ -71,7 +71,7 @@ public class TaskController {
     public ResponseEntity<String> deleteTask(@PathVariable Long id,
             @RequestParam @NonNull Long userId) {
         Task task = taskService.getTaskById(id).orElseThrow(() -> {
-            return new NotFoundException("Cannot find task with ID" + id);
+            return new NotFoundException("Cannot find task with ID " + id);
         });
         User user = task.getUser();
         if (!userId.equals(user.getId())) {
