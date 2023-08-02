@@ -7,6 +7,7 @@ import com.example.todo.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,11 +39,8 @@ public class TaskController {
 
     @GetMapping("/{id}")
     public ResponseEntity<TaskDTO> getTask(@PathVariable Long id,
-               @RequestParam Long userId) {
+               @RequestParam @NonNull Long userId) {
         Task task = taskService.getTaskById(id);
-        if (userId == null) {
-            throw new AuthenticationException("Unauthenticated");
-        }
         if (!userId.equals(task.getUser().getId())) {
             throw new AuthorisationException("Unauthorised - not your task");
         }
@@ -71,5 +69,17 @@ public class TaskController {
         }
         Task updatedTask = taskService.updateTask(task, body);
         return ResponseEntity.ok(updatedTask.toDTO());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteTask(@PathVariable Long id,
+            @RequestParam Long userId) {
+        Task task = taskService.getTaskById(id);
+        User user = task.getUser();
+        if (!userId.equals(user.getId())) {
+            throw new AuthorisationException("Unauthorised - not your task");
+        }
+        taskService.deleteTask(id);
+        return ResponseEntity.ok("Task was successfully deleted");
     }
 }
