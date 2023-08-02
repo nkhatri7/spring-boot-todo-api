@@ -1,9 +1,8 @@
 package com.example.todo.task;
 
-import com.example.todo.exceptions.AuthenticationException;
 import com.example.todo.exceptions.AuthorisationException;
-import com.example.todo.exceptions.ValidationException;
 import com.example.todo.user.User;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,17 +22,9 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<TaskDTO> createTask(@RequestBody TaskDTO body) {
-        if (body.getTitle() == null || body.getTitle().trim().isEmpty()) {
-            throw new ValidationException("Missing task title");
-        }
-        if (body.getDueDate() == null) {
-            throw new ValidationException("Missing due date");
-        }
-        if (body.getUserId() == null) {
-            throw new ValidationException("Missing user ID");
-        }
-        Task newTask = taskService.createTask(body);
+    public ResponseEntity<TaskDTO> createTask(
+            @RequestBody @Valid NewTaskPayload payload) {
+        Task newTask = taskService.createTask(payload);
         return new ResponseEntity<>(newTask.toDTO(), HttpStatus.CREATED);
     }
 
@@ -58,22 +49,19 @@ public class TaskController {
 
     @PutMapping("/{id}")
     public ResponseEntity<TaskDTO> updateTask(@PathVariable Long id,
-              @RequestBody TaskDTO body) {
+              @RequestBody @Valid UpdateTaskPayload payload) {
         Task task = taskService.getTaskById(id);
-        if (body.getUserId() == null) {
-            throw new ValidationException("Missing user ID");
-        }
         User user = task.getUser();
-        if (!body.getUserId().equals(user.getId())) {
+        if (!payload.userId().equals(user.getId())) {
             throw new AuthorisationException("Unauthorised - not your task");
         }
-        Task updatedTask = taskService.updateTask(task, body);
+        Task updatedTask = taskService.updateTask(task, payload);
         return ResponseEntity.ok(updatedTask.toDTO());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteTask(@PathVariable Long id,
-            @RequestParam Long userId) {
+            @RequestParam @NonNull Long userId) {
         Task task = taskService.getTaskById(id);
         User user = task.getUser();
         if (!userId.equals(user.getId())) {

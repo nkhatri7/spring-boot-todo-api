@@ -2,11 +2,25 @@ package com.example.todo.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class CustomExceptionHandler {
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<CustomErrorResponse> handleMethodArgumentException(
+            MethodArgumentNotValidException ex) {
+        CustomErrorResponse errorResponse = new CustomErrorResponse();
+        errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+        String message = ex.getFieldError() == null
+                ? "Missing field"
+                : ex.getFieldError().getDefaultMessage();
+        errorResponse.setMessage(message);
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<CustomErrorResponse> handleValidationException(
             ValidationException ex) {

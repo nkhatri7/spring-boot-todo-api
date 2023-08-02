@@ -22,19 +22,19 @@ public class TaskService {
         this.userRepository = userRepository;
     }
 
-    public Task createTask(TaskDTO taskDTO) {
-        User user = userRepository.findById(taskDTO.getUserId())
+    public Task createTask(NewTaskPayload payload) {
+        User user = userRepository.findById(payload.userId())
                 .orElseThrow(() -> new ValidationException(
-                        "User with ID " + taskDTO.getUserId() + " doesn't exist"
+                        "User with ID " + payload.userId() + " doesn't exist"
                 ));
         Task task = new Task();
-        task.setTitle(taskDTO.getTitle());
-        if (taskDTO.getDescription() == null) {
+        task.setTitle(payload.title().trim());
+        if (payload.description() == null) {
             task.setDescription("");
         } else {
-            task.setDescription(taskDTO.getDescription());
+            task.setDescription(payload.description().trim());
         }
-        task.setDueDate(taskDTO.getDueDate());
+        task.setDueDate(payload.dueDate());
         task.setComplete(false);
         task.setUser(user);
         return taskRepository.save(task);
@@ -51,27 +51,27 @@ public class TaskService {
     }
 
     @Transactional
-    public Task updateTask(Task task, TaskDTO updatedData) {
-        if(updatedData.getTitle() != null
-                && !updatedData.getTitle().trim().isEmpty()
-                && !updatedData.getTitle().trim().equals(task.getTitle())) {
-            task.setTitle(updatedData.getTitle());
+    public Task updateTask(Task task, UpdateTaskPayload payload) {
+        if(payload.title() != null
+                && !payload.title().trim().isEmpty()
+                && !payload.title().trim().equals(task.getTitle())) {
+            task.setTitle(payload.title().trim());
         }
 
-        if (updatedData.getDescription() != null
-                && !updatedData.getDescription().trim().isEmpty()
-                && !updatedData.getDescription().trim()
+        if (payload.description() != null
+                && !payload.description().trim().isEmpty()
+                && !payload.description().trim()
                         .equals(task.getDescription())) {
-            task.setDescription(updatedData.getDescription());
+            task.setDescription(payload.description().trim());
         }
 
-        if (updatedData.getDueDate() != null
-                && !updatedData.getDueDate().equals(task.getDueDate())) {
-            task.setDueDate(updatedData.getDueDate());
+        if (payload.dueDate() != null
+                && !payload.dueDate().equals(task.getDueDate())) {
+            task.setDueDate(payload.dueDate());
         }
 
-        if (updatedData.isComplete() != task.isComplete()) {
-            task.setComplete(updatedData.isComplete());
+        if (payload.isComplete() != task.isComplete()) {
+            task.setComplete(payload.isComplete());
         }
 
         return task;

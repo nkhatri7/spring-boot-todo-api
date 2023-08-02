@@ -13,14 +13,15 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User createUser(User user) {
-        String encryptedPassword = encryptPassword(user.getPassword());
-        user.setPassword(encryptedPassword);
+    public User createUser(RegistrationPayload payload) {
+        String encryptedPassword = encryptPassword(payload.password());
+        User user = new User(payload.name(), payload.email(),
+                encryptedPassword);
         return userRepository.save(user);
     }
 
-    public User getUserByEmail(User user) {
-        return userRepository.getUserByEmail(user.getEmail());
+    public User getUserByEmail(String email) {
+        return userRepository.getUserByEmail(email);
     }
 
     public String encryptPassword(String password) {
