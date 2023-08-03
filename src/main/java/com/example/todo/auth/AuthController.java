@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * A controller to handle incoming requests for the /api/v1/auth endpoint.
+ */
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
@@ -22,6 +25,15 @@ public class AuthController {
         this.authService = authService;
     }
 
+    /**
+     * Handles incoming requests for the /api/v1/auth/register endpoint which
+     * registers a new user in the system.
+     * @param payload The payload for the incoming request.
+     * @return The new user data with a JWT token for the user creating an
+     * account.
+     * @throws ValidationException If an account with the email from the payload
+     * already exists.
+     */
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> registerUser(
             @RequestBody @Valid RegistrationPayload payload
@@ -40,6 +52,17 @@ public class AuthController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    /**
+     * Handles incoming requests for the /api/v1/auth/login endpoint which
+     * authenticates the user making the request and sends back the user data
+     * with a JWT token.
+     * @param payload The payload for the incoming request (email and password).
+     * @return The User data and a JWT token for the user making the request.
+     * @throws ValidationException If an account with the given email from the
+     * payload doesn't exist.
+     * @throws AuthorisationException If the password from the payload is
+     * incorrect.
+     */
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> signInUser(
             @RequestBody @Valid LoginPayload payload

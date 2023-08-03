@@ -11,6 +11,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+/**
+ * Contains helper/utility methods for authentication and authorisation to be
+ * used in controllers to handle incoming requests and validate requests.
+ */
 @Component
 public class AuthUtils {
     private final UserRepository userRepository;
@@ -20,6 +24,12 @@ public class AuthUtils {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Gets the user ID from the authentication context of the request.
+     * @return The user ID of the user making the request.
+     * @throws AuthenticationException If the user making the request doesn't
+     * exist in the database.
+     */
     public Long getUserIdFromAuth() {
         User user = getUserFromAuth().orElseThrow(() -> {
             return new AuthenticationException("Unauthenticated");
@@ -27,6 +37,10 @@ public class AuthUtils {
         return user.getId();
     }
 
+    /**
+     * Gets the user data (if exists) for the user making the request.
+     * @return The User object of the user making the request.
+     */
     public Optional<User> getUserFromAuth() {
         Authentication authentication = SecurityContextHolder
                 .getContext()

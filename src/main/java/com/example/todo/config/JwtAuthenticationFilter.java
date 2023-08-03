@@ -16,6 +16,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+/**
+ * A JWT Authentication Filter to filter incoming requests and authenticate
+ * them.
+ */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -29,6 +33,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.userDetailsService = userDetailsService;
     }
 
+    /**
+     * Filters incoming requests by checking the JWT tokens and authenticating
+     * the user making the request.
+     * @param request The incoming request.
+     * @param response The response from the request.
+     * @param filterChain The filter chain for the request.
+     */
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
@@ -52,6 +63,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    /**
+     * Updates the authentication details for the security context holder.
+     * @param userDetails The user details of the user making the request.
+     * @param request The incoming request.
+     */
     private void setRequestAuthentication(UserDetails userDetails,
             HttpServletRequest request) {
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(

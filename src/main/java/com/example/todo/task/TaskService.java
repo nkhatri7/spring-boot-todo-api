@@ -9,22 +9,24 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * A service class containing methods for all the business logic for tasks.
+ */
 @Service
 public class TaskService {
     private final TaskRepository taskRepository;
-    private final UserRepository userRepository;
 
     @Autowired
-    public TaskService(TaskRepository taskRepository,
-                       UserRepository userRepository) {
+    public TaskService(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
-        this.userRepository = userRepository;
     }
 
-    public Optional<User> getTaskUser(Long userId) {
-        return userRepository.findById(userId);
-    }
-
+    /**
+     * Creates a task for the given user with the data from the given payload.
+     * @param payload The data for the new task.
+     * @param user The user creating the task.
+     * @return A new Task object.
+     */
     public Task createTask(NewTaskPayload payload, User user) {
         Task task = new Task();
         task.setTitle(payload.title().trim());
@@ -39,14 +41,30 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
+    /**
+     * Gets a Task object for the task that has the given ID (if it exists)
+     * @param taskId The ID of a task.
+     * @return A Task object (if a task with the ID is found)
+     */
     public Optional<Task> getTaskById(Long taskId) {
         return taskRepository.findById(taskId);
     }
 
+    /**
+     * Gets a list of tasks that belong to the user with the given user ID.
+     * @param userId The ID of a user.
+     * @return A list of tasks.
+     */
     public List<Task> getUserTasks(Long userId) {
         return taskRepository.findAllByUserId(userId);
     }
 
+    /**
+     * Updates the given task with the updated data from the payload.
+     * @param task The task to be updated.
+     * @param payload An object containing the new task data.
+     * @return A Task object with the updated task data.
+     */
     @Transactional
     public Task updateTask(Task task, UpdateTaskPayload payload) {
         if(payload.title() != null
@@ -74,6 +92,10 @@ public class TaskService {
         return task;
     }
 
+    /**
+     * Deletes the task that has the given task ID.
+     * @param taskId The ID of a task.
+     */
     public void deleteTask(Long taskId) {
         taskRepository.deleteById(taskId);
     }

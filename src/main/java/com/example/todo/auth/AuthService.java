@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * Contains business logic for the auth endpoints.
+ */
 @Service
 public class AuthService {
     private final UserRepository userRepository;
@@ -23,20 +26,44 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
+    /**
+     * Gets a User object from the database for a user with the given email
+     * (if a user with that email exists).
+     * @param email The email of the user.
+     * @return The User data for the user with the given email (if one exists).
+     */
     public Optional<User> getUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
+    /**
+     * Creates a user in the database with the data from the given payload.
+     * @param payload The name, email and password for the new user.
+     * @return A User object with the new user's data.
+     */
     public User createUser(RegistrationPayload payload) {
         User user = new User(payload.name().trim(), payload.email().trim(),
                 passwordEncoder.encode(payload.password().trim()));
         return userRepository.save(user);
     }
 
+    /**
+     * Generates a JWT token for a user.
+     * @param user The user needing a JWT token.
+     * @return A JWT token.
+     */
     public String generateUserToken(User user) {
         return jwtService.generateToken(user);
     }
 
+    /**
+     * Checks if the given raw password is the same as the given encrypted
+     * password.
+     * @param password The raw password.
+     * @param encryptedPassword The encrypted password.
+     * @return `true` if the raw password matches the encrypted password.
+     * `false` otherwise.
+     */
     public boolean isPasswordValid(String password, String encryptedPassword) {
         return passwordEncoder.matches(password, encryptedPassword);
     }
