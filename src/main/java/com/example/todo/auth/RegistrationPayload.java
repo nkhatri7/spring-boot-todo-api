@@ -1,8 +1,11 @@
-package com.example.todo.user;
+package com.example.todo.auth;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record LoginPayload(
+public record RegistrationPayload(
+        @NotBlank(message = "Missing name")
+        String name,
+
         @NotBlank(message = "Missing email")
         String email,
 

@@ -2,13 +2,17 @@ package com.example.todo.user;
 
 import com.example.todo.task.Task;
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.List;
 
 @Entity(name = "User")
 // Have to use "users" because "user" is a reserved word in PostgreSQL
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
     @Id
     @SequenceGenerator(
             name = "user_sequence",
@@ -26,16 +30,22 @@ public class User {
     private String email;
     @Column(nullable = false)
     private String password;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role;
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @Column(nullable = false)
     private List<Task> tasks;
 
-    public User() {}
+    public User() {
+        this.role = Role.USER;
+    }
 
     public User(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;
+        this.role = Role.USER;
     }
 
     public User(String name, String email, String password, List<Task> tasks) {
@@ -43,6 +53,7 @@ public class User {
         this.email = email;
         this.password = password;
         this.tasks = tasks;
+        this.role = Role.USER;
     }
 
     public Long getId() {
@@ -69,12 +80,16 @@ public class User {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public List<Task> getTasks() {
@@ -85,7 +100,38 @@ public class User {
         this.tasks = tasks;
     }
 
-    public UserDTO toDTO() {
-        return new UserDTO(this.id, this.name, this.email);
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(this.role.name()));
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

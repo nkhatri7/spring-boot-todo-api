@@ -63,6 +63,8 @@ public class CustomExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<CustomErrorResponse> handleException(Exception ex) {
+        System.out.println(ex.getClass());
+        System.out.println(ex.getMessage());
         CustomErrorResponse errorResponse = new CustomErrorResponse();
         errorResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         errorResponse.setMessage("Internal Server Error");

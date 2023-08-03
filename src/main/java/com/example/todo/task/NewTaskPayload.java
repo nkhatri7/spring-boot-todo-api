@@ -12,8 +12,5 @@ public record NewTaskPayload(
     String description,
 
     @NotNull(message = "Missing due date")
-    LocalDate dueDate,
-
-    @NotNull(message = "Missing user ID")
-    Long userId
+    LocalDate dueDate
 ) {}
