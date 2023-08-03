@@ -1,7 +1,7 @@
 package com.example.todo.auth;
 
 import com.example.todo.exceptions.AuthorisationException;
-import com.example.todo.exceptions.ValidationException;
+import com.example.todo.exceptions.BadRequestException;
 import com.example.todo.user.User;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class AuthController {
      * @param payload The payload for the incoming request.
      * @return The new user data with a JWT token for the user creating an
      * account.
-     * @throws ValidationException If an account with the email from the payload
+     * @throws BadRequestException If an account with the email from the payload
      * already exists.
      */
     @PostMapping("/register")
@@ -39,7 +39,7 @@ public class AuthController {
             @RequestBody @Valid RegistrationPayload payload
     ) {
         if (authService.getUserByEmail(payload.email()).isPresent()) {
-            throw new ValidationException("Account with email already exists");
+            throw new BadRequestException("Account with email already exists");
         }
         User newUser = authService.createUser(payload);
         String token = authService.generateUserToken(newUser);
@@ -58,7 +58,7 @@ public class AuthController {
      * with a JWT token.
      * @param payload The payload for the incoming request (email and password).
      * @return The User data and a JWT token for the user making the request.
-     * @throws ValidationException If an account with the given email from the
+     * @throws BadRequestException If an account with the given email from the
      * payload doesn't exist.
      * @throws AuthorisationException If the password from the payload is
      * incorrect.
@@ -68,7 +68,7 @@ public class AuthController {
             @RequestBody @Valid LoginPayload payload
     ) {
         User signedInUser = authService.getUserByEmail(payload.email())
-                .orElseThrow(() -> new ValidationException(
+                .orElseThrow(() -> new BadRequestException(
                         "Account with this email doesn't exist"
                 ));
         if (!authService.isPasswordValid(payload.password(),

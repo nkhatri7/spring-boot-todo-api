@@ -3,7 +3,7 @@ package com.example.todo.task;
 import com.example.todo.auth.AuthUtils;
 import com.example.todo.exceptions.AuthorisationException;
 import com.example.todo.exceptions.NotFoundException;
-import com.example.todo.exceptions.ValidationException;
+import com.example.todo.exceptions.BadRequestException;
 import com.example.todo.user.User;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * A controller to handle incoming requests for the /api/v1/task endpoints.
@@ -34,14 +33,14 @@ public class TaskController {
      * a task with the given payload in the request body.
      * @param payload The payload from the request body.
      * @return An object with data for the created task.
-     * @throws ValidationException if the user making the request doesn't exist
+     * @throws BadRequestException If the user making the request doesn't exist
      * in the database.
      */
     @PostMapping
     public ResponseEntity<TaskDTO> createTask(
             @RequestBody @Valid NewTaskPayload payload) {
         User user = authUtils.getUserFromAuth().orElseThrow(() -> {
-            return new ValidationException("Invalid user");
+            return new BadRequestException("Invalid user");
         });
         Task newTask = taskService.createTask(payload, user);
         return new ResponseEntity<>(newTask.toDTO(), HttpStatus.CREATED);

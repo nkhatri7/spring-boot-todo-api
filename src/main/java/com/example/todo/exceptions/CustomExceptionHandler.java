@@ -21,9 +21,9 @@ public class CustomExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<CustomErrorResponse> handleValidationException(
-            ValidationException ex) {
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<CustomErrorResponse> handleBadRequestException(
+            BadRequestException ex) {
         CustomErrorResponse errorResponse = new CustomErrorResponse();
         errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
         errorResponse.setMessage(ex.getMessage());
