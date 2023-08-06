@@ -8,7 +8,7 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
@@ -20,12 +20,12 @@ import java.util.function.Function;
  * A service containing methods to generate and validate JWT tokens and to
  * get user information from JWT tokens.
  */
-@Service
-public class JwtService {
+@Component
+public class JwtUtils {
     private final Environment environment;
 
     @Autowired
-    public JwtService(Environment environment) {
+    public JwtUtils(Environment environment) {
         this.environment = environment;
     }
 

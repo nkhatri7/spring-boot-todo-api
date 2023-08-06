@@ -1,6 +1,6 @@
 package com.example.todo.auth;
 
-import com.example.todo.config.JwtService;
+import com.example.todo.config.JwtUtils;
 import com.example.todo.user.User;
 import com.example.todo.user.UserRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -27,20 +27,20 @@ class AuthServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
     @Mock
-    private JwtService jwtService;
+    private JwtUtils jwtUtils;
     private AuthService authService;
 
     @BeforeEach
     void setUp() {
         authService = new AuthService(userRepository, passwordEncoder,
-                jwtService);
+                jwtUtils);
     }
 
     @AfterEach
     void tearDown() {
         reset(userRepository);
         reset(passwordEncoder);
-        reset(jwtService);
+        reset(jwtUtils);
     }
 
     @Test
@@ -152,21 +152,21 @@ class AuthServiceTest {
     }
 
     @Test
-    void generateUserToken_itShouldCallGenerateTokenFromJwtService() {
+    void generateUserToken_itShouldCallGenerateTokenFromJwtUtils() {
         // When generateUserToken() is called
         User user = new User("test", "test@gmail.com", "password");
         authService.generateUserToken(user);
-        // Then JwtService's generateToken() is called
-        verify(jwtService).generateToken(user);
+        // Then JwtUtils' generateToken() is called
+        verify(jwtUtils).generateToken(user);
     }
 
     @Test
-    void generateUserToken_itShouldReturnTheResultFromGenerateTokenFromJwtService() {
+    void generateUserToken_itShouldReturnTheResultFromGenerateTokenFromJwtUtils() {
         // When generateUserToken() is called
-        // and JwtService's generateToken() returns somerandomjwttoken
+        // and JwtUtils' generateToken() returns somerandomjwttoken
         User user = new User("test", "test@gmail.com", "password");
         String token = "somerandomjwttoken";
-        given(jwtService.generateToken(user)).willReturn(token);
+        given(jwtUtils.generateToken(user)).willReturn(token);
         // Then generateUserToken() returns somerandomjwttoken
         String returnValue = authService.generateUserToken(user);
         assertThat(returnValue).isEqualTo(token);

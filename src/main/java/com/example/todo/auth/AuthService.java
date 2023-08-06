@@ -1,6 +1,6 @@
 package com.example.todo.auth;
 
-import com.example.todo.config.JwtService;
+import com.example.todo.config.JwtUtils;
 import com.example.todo.user.User;
 import com.example.todo.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +16,14 @@ import java.util.Optional;
 public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
+    private final JwtUtils jwtUtils;
 
     @Autowired
     public AuthService(UserRepository userRepository,
-            PasswordEncoder passwordEncoder, JwtService jwtService) {
+            PasswordEncoder passwordEncoder, JwtUtils jwtUtils) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.jwtService = jwtService;
+        this.jwtUtils = jwtUtils;
     }
 
     /**
@@ -55,7 +55,7 @@ public class AuthService {
      * @return A JWT token.
      */
     public String generateUserToken(User user) {
-        return jwtService.generateToken(user);
+        return jwtUtils.generateToken(user);
     }
 
     /**
