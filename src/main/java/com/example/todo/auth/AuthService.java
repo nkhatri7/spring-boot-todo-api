@@ -42,8 +42,10 @@ public class AuthService {
      * @return A User object with the new user's data.
      */
     public User createUser(RegistrationPayload payload) {
-        User user = new User(payload.name().trim(), payload.email().trim(),
-                passwordEncoder.encode(payload.password().trim()));
+        User user = new User();
+        user.setName(payload.name().trim());
+        user.setEmail(payload.email().trim());
+        user.setPassword(passwordEncoder.encode(payload.password().trim()));
         return userRepository.save(user);
     }
 
