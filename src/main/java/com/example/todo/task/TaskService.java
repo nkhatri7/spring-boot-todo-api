@@ -42,9 +42,9 @@ public class TaskService {
     }
 
     /**
-     * Gets a Task object for the task that has the given ID (if it exists)
+     * Gets a Task object for the task that has the given ID (if it exists).
      * @param taskId The ID of a task.
-     * @return A Task object (if a task with the ID is found)
+     * @return A Task object (if a task with the ID is found).
      */
     public Optional<Task> getTaskById(Long taskId) {
         return taskRepository.findById(taskId);
