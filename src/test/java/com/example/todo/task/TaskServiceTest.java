@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
 import java.util.Optional;
 
@@ -291,8 +292,8 @@ class TaskServiceTest {
     @Test
     void updateTask_itShouldUpdateTheDueDateIfTheDueDateIsInThePayloadAndIsDifferentToTheCurrentDueDate() {
         // Given a task and a payload with an updated due date
-        LocalDate oldDueDate = LocalDate.of(2023, 8, 7);
-        LocalDate updatedDueDate = LocalDate.of(2023, 8, 8);
+        LocalDate oldDueDate = LocalDate.of(2023, Month.AUGUST, 7);
+        LocalDate updatedDueDate = LocalDate.of(2023, Month.AUGUST, 8);
         Task task = new Task("task", "", oldDueDate, false);
         UpdateTaskPayload payload = new UpdateTaskPayload(
                 null,
@@ -310,7 +311,7 @@ class TaskServiceTest {
     @Test
     void updateTask_itShouldNotUpdateTheDueDateIfTheDueDateIsInThePayloadAndIsTheSameAsTheCurrentDueDate() {
         // Given a task and a payload with the same due date
-        LocalDate dueDate = LocalDate.of(2023, 8, 7);
+        LocalDate dueDate = LocalDate.of(2023, Month.AUGUST, 7);
         Task task = new Task("task", "", dueDate, false);
         UpdateTaskPayload payload = new UpdateTaskPayload(
                 null,
@@ -327,7 +328,7 @@ class TaskServiceTest {
     @Test
     void updateTask_itShouldNotUpdateTheDueDateIfTheDueDateIsNotInThePayload() {
         // Given a task and a payload with the same due date
-        LocalDate dueDate = LocalDate.of(2023, 8, 7);
+        LocalDate dueDate = LocalDate.of(2023, Month.AUGUST, 7);
         Task task = new Task("task", "", dueDate, false);
         UpdateTaskPayload payload = new UpdateTaskPayload(
                 null,
